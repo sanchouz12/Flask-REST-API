@@ -1,4 +1,4 @@
 Flask
 Flask-RESTful
 FLASK-JWT
-dotenv
+python-dotenv

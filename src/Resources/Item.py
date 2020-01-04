@@ -1,28 +1,11 @@
-from flask import Flask
-from flask_restful import Resource, Api, reqparse
-from flask_jwt import JWT, jwt_required
-
-from dotenv import load_dotenv
-import os
-
-from security import authenticate, identity
-
-load_dotenv()
-
-app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY")
-api = Api(app)
-
-# /auth
-# returns token, if everything is ok
-jwt = JWT(app, authenticate, identity)
-
-items = []
+from flask_restful import Resource, reqparse
+from flask_jwt import jwt_required
 
 
 class Item(Resource):
     # belongs to class itself
     parser = reqparse.RequestParser()
+
     parser.add_argument("price",
                         type = float,
                         required = True,
@@ -42,7 +25,7 @@ class Item(Resource):
         except ValueError:
             return {"message": "Bad id format"}, 400
 
-        item = next(filter(lambda x: str(x["id"]) == item_id, items), None)
+        item = next(filter(lambda x: str(x["id"]) == item_id, Item.items), None)
 
         return {"item": item}, 200 if item else 404
 
@@ -53,7 +36,7 @@ class Item(Resource):
         except ValueError:
             return {"message": "Bad id format"}, 400
 
-        if next(filter(lambda x: str(x["id"]) == item_id, items), None):
+        if next(filter(lambda x: str(x["id"]) == item_id, Item.items), None):
             return {"message": "Item with id '{}' already exists".format(item_id)}, 400
 
         data = Item.parser.parse_args()
@@ -64,14 +47,13 @@ class Item(Resource):
             "price": data["price"],
             "description": data["description"]
         }
-        items.append(item)
+        Item.append(item)
 
         return {"item": item}, 201
 
     @jwt_required()
     def delete(self, item_id):
-        global items
-        items = list(filter(lambda x: x["id"] != item_id, items))
+        items = list(filter(lambda x: x["id"] != item_id, Item.items))
 
         return {"message": "Item deleted"}
 
@@ -79,7 +61,7 @@ class Item(Resource):
     def put(self, item_id):
         data = Item.parser.parse_args()
 
-        item = next(filter(lambda x: x["id"] == item_id, items), None)
+        item = next(filter(lambda x: x["id"] == item_id, Item.items), None)
 
         if item:
             item.update(data)
@@ -90,17 +72,6 @@ class Item(Resource):
                 "price": data["price"],
                 "description": data["description"]
             }
-            items.append(item)
+            Item.items.append(item)
 
         return {"item": item}
-
-
-class ItemList(Resource):
-    def get(self):
-        return {"items": items}
-
-
-api.add_resource(Item, "/item/<string:item_id>")
-api.add_resource(ItemList, "/items")
-
-app.run(port = 5000, debug = True)
