@@ -3,7 +3,7 @@ from .connection import DBConnection
 
 def create_table(host):
     if host == "users":
-        host = "databases/" + host + ".db"
+        host = "databases/database.db"
 
         with DBConnection(host) as connection:
             cursor = connection.cursor()
@@ -11,7 +11,7 @@ def create_table(host):
 
             cursor.execute(query)
     elif host == "items":
-        host = "databases/" + host + ".db"
+        host = "databases/database.db"
 
         with DBConnection(host) as connection:
             cursor = connection.cursor()

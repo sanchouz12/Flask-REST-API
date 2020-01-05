@@ -19,8 +19,9 @@ api = Api(app)
 # returns token, if everything is ok
 jwt = JWT(app, authenticate, identity)
 
-api.add_resource(Item, "/item/<string:item_id>")
+api.add_resource(Item, "/item/<string:_id>")
 api.add_resource(ItemList, "/items")
 api.add_resource(RegUser, "/register")
 
-app.run(port = 5000, debug = True)
+if __name__ == "__main__":
+    app.run(port = 5000, debug = True)
