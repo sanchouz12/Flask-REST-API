@@ -1,4 +1,4 @@
-from .connection import DBConnection
+from db.helpers.connection import DBConnection
 
 
 def create_table(host):

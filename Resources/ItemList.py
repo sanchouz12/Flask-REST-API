@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from src.db.items_db import ItemsDB
+from db.items_db import ItemsDB
 
 
 class ItemList(Resource):

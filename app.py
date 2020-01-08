@@ -4,10 +4,10 @@ from flask_jwt import JWT
 from dotenv import load_dotenv
 import os
 
-from src.auth.security import authenticate, identity
-from src.Resources.Item import Item
-from src.Resources.ItemList import ItemList
-from src.Resources.RegUser import RegUser
+from auth.security import authenticate, identity
+from Resources.Item import Item
+from Resources.ItemList import ItemList
+from Resources.RegUser import RegUser
 
 load_dotenv()
 

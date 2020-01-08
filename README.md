@@ -9,7 +9,8 @@ Features
 --------
 1. Implemented HTTP methods: GET, POST, PUT, DELETE
 2. Small authentication
+3. Users and items are stored in SQLite database
 
 Planned features
 ----------------
-1. Add database instead of in-memory db
+1. Improve code with Flask-SQLAlchecmy

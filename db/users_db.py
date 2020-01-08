@@ -1,5 +1,5 @@
-from src.db.helpers.connection import DBConnection
-from src.db.helpers.create_tables import create_table
+from db.helpers.connection import DBConnection
+from db.helpers.create_tables import create_table
 
 
 class User:

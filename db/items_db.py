@@ -1,5 +1,5 @@
-from .helpers.connection import DBConnection
-from .helpers.create_tables import create_table
+from db.helpers.connection import DBConnection
+from db.helpers.create_tables import create_table
 
 
 class ItemsDB:
@@ -7,13 +7,30 @@ class ItemsDB:
         self.host = create_table(host)
 
     def add(self, item):
+        print(item)
+
         with DBConnection(self.host) as connection:
             cursor = connection.cursor()
             query = "INSERT INTO items VALUES (?, ?, ?, ?)"
 
             cursor.execute(query, (item["id"], item["name"], item["price"], item["description"]))
 
-        return {"item": item}, 201
+        return item, 201
+
+    def delete(self, _id):
+        data, code = self.get(_id)
+
+        if code == 404:
+            code = 400
+            return data, code
+        else:
+            with DBConnection(self.host) as connection:
+                cursor = connection.cursor()
+                query = "DELETE FROM items WHERE id = ?"
+
+                cursor.execute(query, (_id, ))
+
+            return {"message": "Item deleted"}, 200
 
     def get(self, _id):
         with DBConnection(self.host) as connection:
@@ -24,12 +41,12 @@ class ItemsDB:
             data = cursor.fetchone()
 
         if data:
-            return {"item": {
+            return {
                 "id": data[0],
                 "name": data[1],
                 "price": data[2],
                 "description": data[3]
-            }}, 200
+            }, 200
         return {"message": "Item not found"}, 404
 
     def get_all(self):
@@ -48,3 +65,10 @@ class ItemsDB:
         }for item in data]
 
         return {"items": items}
+
+    def update(self, item, _id):
+        with DBConnection(self.host) as connection:
+            cursor = connection.cursor()
+            query = "UPDATE items SET name = ?, price = ?, description = ? WHERE id = ?"
+
+            cursor.execute(query, (item["name"], item["price"], item["description"], _id))

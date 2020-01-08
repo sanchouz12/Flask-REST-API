@@ -1,6 +1,6 @@
 # safe string compare
 from werkzeug.security import safe_str_cmp
-from src.db.users_db import UsersDB
+from db.users_db import UsersDB
 
 db = UsersDB("users")
 
