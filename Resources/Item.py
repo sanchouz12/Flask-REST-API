@@ -1,11 +1,10 @@
 from flask_restful import Resource, reqparse
 from flask_jwt import jwt_required
-from db.items_db import ItemsDB
+from models.items_model import ItemsModel
 
 
 class Item(Resource):
     # belongs to class itself
-    db = ItemsDB("items")
     parser = reqparse.RequestParser()
 
     parser.add_argument(
@@ -24,12 +23,13 @@ class Item(Resource):
 
     @jwt_required()
     def delete(self, _id):
-        data, code = Item.db.delete(_id)
+        data = ItemsModel.get(_id)
 
-        if code is None:
-            return {"message": "Item deleted"}
+        if data:
+            data.delete()
+            return {"message": "Item deleted"}, 200
         else:
-            return data, code
+            return {"message": "Item not found, can't delete"}, 400
 
     def get(self, _id):
         try:
@@ -37,9 +37,12 @@ class Item(Resource):
         except ValueError:
             return {"message": "Bad id format"}, 400
 
-        item, code = Item.db.get(_id)
+        item = ItemsModel.get(_id)
 
-        return item, code
+        if item:
+            return item.jsonify(), 200
+        else:
+            return {"message": "Item not found"}, 404
 
     @jwt_required()
     def post(self, _id):
@@ -48,20 +51,15 @@ class Item(Resource):
         except ValueError:
             return {"message": "Bad id format"}, 400
 
-        if Item.db.get(_id)[1] == 200:
+        if ItemsModel.get(_id):
             return {"message": "Item with id '{}' already exists in database".format(_id)}, 400
 
         data = Item.parser.parse_args()
-        item = {
-            "id": _id,
-            "name": data["name"],
-            "price": data["price"],
-            "description": data["description"]
-        }
+        item = ItemsModel(_id, **data)
 
-        item, code = Item.db.add(item)
+        item.save()
 
-        return item, code
+        return item.jsonify(), 201
 
     @jwt_required()
     def put(self, _id):
@@ -69,23 +67,22 @@ class Item(Resource):
             int(_id)
         except ValueError:
             return {"message": "Bad id format"}, 400
-        
+
         data = Item.parser.parse_args()
 
-        item, code = Item.db.get(_id)
+        item = ItemsModel.get(_id)
+        code = 0
 
-        if code == 200:
-            item.update(data)
-            Item.db.update(item, _id)
+        if item:
+            item.id = _id
+            item.name = data["name"]
+            item.price = data["price"]
+            item.description = data["description"]
+            code = 200
         else:
-            item = {
-                "id": _id,
-                "name": data["name"],
-                "price": data["price"],
-                "description": data["description"]
-            }
-            Item.db.add(item)
-
+            item = ItemsModel(_id, **data)
             code = 201
 
-        return item, code
+        item.save()
+
+        return item.jsonify(), code

@@ -2,3 +2,4 @@ Flask
 Flask-RESTful
 FLASK-JWT
 python-dotenv
+Flask-SQLAlchemy

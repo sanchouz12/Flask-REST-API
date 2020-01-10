@@ -1,10 +1,9 @@
 from flask_restful import Resource, reqparse
-from db.users_db import UsersDB
+from models.users_model import UsersModel
 
 
 class RegUser(Resource):
     parser = reqparse.RequestParser()
-    db = UsersDB("users")
 
     parser.add_argument("username",
                         type = str,
@@ -18,9 +17,10 @@ class RegUser(Resource):
     def post(self):
         data = RegUser.parser.parse_args()
 
-        if self.db.get_by_name(data["username"]):
+        if UsersModel.get_by_name(data["username"]):
             return {"message": "User with that username already exists"}, 400
 
-        RegUser.db.add(data)
+        user = UsersModel(None, **data)
+        user.save()
 
         return {"message": "User was created"}, 201
