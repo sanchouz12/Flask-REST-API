@@ -8,11 +8,15 @@ class ItemsModel(db.Model):
     price = db.Column(db.Float(precision = 2))
     description = db.Column(db.String(300))
 
-    def __init__(self, _id, name, price, description):
+    store = db.relationship("StoresModel")
+    store_id = db.Column(db.Integer, db.ForeignKey("store.id"))
+
+    def __init__(self, _id, name, price, description, store_id):
         self.id = _id
         self.name = name
         self.price = price
         self.description = description
+        self.store_id = store_id
 
     def save(self):
         db.session.add(self)
@@ -41,5 +45,6 @@ class ItemsModel(db.Model):
             "id": self.id,
             "name": self.name,
             "price": self.price,
-            "description": self.description
+            "description": self.description,
+            "store_id": self.store_id
         }

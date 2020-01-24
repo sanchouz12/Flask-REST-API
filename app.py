@@ -9,6 +9,8 @@ from auth.security import authenticate, identity
 from Resources.Item import Item
 from Resources.ItemList import ItemList
 from Resources.RegUser import RegUser
+from Resources.Store import Store
+from Resources.StoreList import StoreList
 
 load_dotenv()
 
@@ -29,6 +31,8 @@ jwt = JWT(app, authenticate, identity)
 api.add_resource(Item, "/item/<string:_id>")
 api.add_resource(ItemList, "/items")
 api.add_resource(RegUser, "/register")
+api.add_resource(Store, "/store/<string:name>")
+api.add_resource(StoreList, "/stores")
 
 if __name__ == "__main__":
     from db import db

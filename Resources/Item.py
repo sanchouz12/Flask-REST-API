@@ -20,6 +20,12 @@ class Item(Resource):
         help = "You have to specify a price"
     )
     parser.add_argument("description", type = str)
+    parser.add_argument(
+        "store_id",
+        type = int,
+        required = True,
+        help = "You have to specify a store id"
+    )
 
     @jwt_required()
     def delete(self, _id):
