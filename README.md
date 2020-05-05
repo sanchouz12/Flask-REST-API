@@ -4,7 +4,8 @@ This is a small learning API, that uses REST principles.
 
 ## Getting Started
 
-If you'd like to get a copy of this projects, do the following:
+### Installing
+
 1. Clone the repository or download archive 
 ```
 git clone https://github.com/sanchouz12/Flask-REST-API
@@ -24,7 +25,7 @@ You'll need an installed Python 3.x and it's recommended to create fresh virtual
 
 ## Built With
 
-* Python
+* Python and Flask library
 * SQLite database managed by SQLAlchemy
 
 ## Contributing
